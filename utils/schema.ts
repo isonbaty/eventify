@@ -5,7 +5,26 @@ export const profileSchema = z.object({
   // firstName: z
   //   .string()
   //   .min(2, { message: 'First Name must be at least 2 characters long' }),
-  firstName: z.string().min(2),
-  lastName: z.string().min(2),
-  username: z.string().min(2),
+  firstName: z
+    .string()
+    .min(2, { message: 'First Name must be at least 2 characters long' }),
+  lastName: z
+    .string()
+    .min(2, { message: 'Last Name must be at least 2 characters long' }),
+  username: z
+    .string()
+    .min(2, { message: 'Username must be at least 2 characters long' }),
 });
+
+export function validateWithZodSchema<T>(
+  schema: ZodSchema<T>,
+  data: unknown
+): T {
+  const result = schema.safeParse(data);
+
+  if (!result.success) {
+    const errors = result.error.errors.map((error) => error.message);
+    throw new Error(errors.join(', '));
+  }
+  return result.data;
+}
