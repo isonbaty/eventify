@@ -13,8 +13,10 @@ import { links } from '@/utils/links';
 import SignOutLink from './SignOutLink';
 import UserIcon from './UserIcon';
 import { SignedOut, SignedIn, SignInButton, SignUpButton } from '@clerk/nextjs';
+import { currentUser } from '@clerk/nextjs/server';
 
-function LinksDropdown() {
+async function LinksDropdown() {
+  const user = await currentUser();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,6 +49,14 @@ function LinksDropdown() {
               </DropdownMenuItem>
             );
           })}
+          {user?.privateMetadata.isAdmin === true ? (
+            <DropdownMenuItem>
+              <Link href='/eventpost/create' className='capitalize w-full'>
+                Create Event
+              </Link>
+            </DropdownMenuItem>
+          ) : null}
+
           <DropdownMenuSeparator />
           <DropdownMenuItem>
             <SignOutLink />

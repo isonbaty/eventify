@@ -1,10 +1,18 @@
 'use server';
 
-import { profileSchema, validateWithZodSchema } from './schema';
+import {
+  profileSchema,
+  validateWithZodSchema,
+  imageSchema,
+  propertySchema,
+  eventSchema,
+} from './schema';
 import db from './db';
 import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { uploadImage } from './supabase';
+import prisma from './db';
 
 const getAuthUser = async () => {
   const user = await currentUser();
@@ -17,6 +25,14 @@ const renderError = (error: unknown): { message: string } => {
   return {
     message: error instanceof Error ? error.message : 'An error occurred',
   };
+};
+
+export const getAdminUser = async () => {
+  const user = await currentUser();
+
+  if (!user) return null;
+  if (!user.publicMetadata.isAdmin) return null;
+  return user;
 };
 
 export const createProfileAction = async (
@@ -40,6 +56,7 @@ export const createProfileAction = async (
     await clerkClient.users.updateUserMetadata(user.id, {
       privateMetadata: {
         hasProfile: true,
+        isAdmin: false,
       },
     });
   } catch (error) {
@@ -100,5 +117,53 @@ export const updateProfileImageAction = async (
   prevState: any,
   formData: FormData
 ): Promise<{ message: string }> => {
-  return { message: 'Profile image updated successfully' };
+  const user = await getAuthUser();
+  try {
+    const image = formData.get('image') as File;
+    const validatedFields = validateWithZodSchema(imageSchema, { image });
+
+    const fullPath = await uploadImage(validatedFields.image);
+    await db.profile.update({
+      where: {
+        clerkId: user.id,
+      },
+      data: {
+        profileImage: fullPath,
+      },
+    });
+    revalidatePath('/profile');
+    return { message: 'Profile image updated successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const createPropertyAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(propertySchema, rawData);
+    return { message: 'Property created successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+  // redirect('/');
+};
+
+export const createEventAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(eventSchema, rawData);
+    return { message: 'Event created successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+  // redirect('/');
 };

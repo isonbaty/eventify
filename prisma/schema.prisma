@@ -17,7 +17,61 @@ model Profile {
   username     String
   email        String
   profileImage String
+  isAdmin      Boolean    @default(false)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  properties   Property[]
+  User         User[]
 
 }
+
+model Property {
+  id          String     @id @default(uuid())
+  name        String
+  tagline     String
+  category    String
+  image       String
+  country     String
+  description String
+  price       Int
+  guests      Int
+  bedrooms    Int
+  beds        Int
+  baths       Int
+  amenities   String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  profileId   String
+}
+
+model Event {
+  id               String    @id @default(uuid())
+  name        String
+  tagline     String
+  category    String
+  image       String
+  location    String
+  description String
+  price       Int
+  maxguests   Int
+  amenities   String
+  createdat   DateTime @default(now())
+  updatedAt   DateTime   @updatedAt
+  hostid           Int?
+  published        Boolean?
+  host             User?     @relation(fields: [hostid], references: [id])
+  User_EventToUser User[]    @relation("Attendees")
+}
+
+model User {
+  email             String?
+  id                Int     @default(autoincrement()) @id
+  mobile            String?
+  name              String?
+  profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  profileId   String
+  hostedEvents      Event[]
+  Event_EventToUser Event[] @relation("Attendees")
+}
+
