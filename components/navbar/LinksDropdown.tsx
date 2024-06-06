@@ -51,7 +51,7 @@ async function LinksDropdown() {
           })}
           {user?.privateMetadata.isAdmin === true ? (
             <DropdownMenuItem>
-              <Link href='/eventpost/create' className='capitalize w-full'>
+              <Link href='/eventspost/create' className='capitalize w-full'>
                 Create Event
               </Link>
             </DropdownMenuItem>

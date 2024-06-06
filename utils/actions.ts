@@ -8,11 +8,10 @@ import {
   eventSchema,
 } from './schema';
 import db from './db';
-import { auth, clerkClient, currentUser } from '@clerk/nextjs/server';
+import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { uploadImage } from './supabase';
-import prisma from './db';
 
 const getAuthUser = async () => {
   const user = await currentUser();
@@ -53,6 +52,7 @@ export const createProfileAction = async (
         ...validatedFields,
       },
     });
+
     await clerkClient.users.updateUserMetadata(user.id, {
       privateMetadata: {
         hasProfile: true,
@@ -160,10 +160,55 @@ export const createEventAction = async (
   const user = await getAuthUser();
   try {
     const rawData = Object.fromEntries(formData);
+    const file = formData.get('image') as File;
+
     const validatedFields = validateWithZodSchema(eventSchema, rawData);
-    return { message: 'Event created successfully' };
+    const validateFile = validateWithZodSchema(imageSchema, { image: file });
+
+    const fullPath = await uploadImage(validateFile.image);
+
+    await db.event.create({
+      data: {
+        profileId: user.id,
+        image: fullPath,
+        ...validatedFields,
+      },
+    });
   } catch (error) {
     return renderError(error);
   }
-  // redirect('/');
+  redirect('/');
+};
+
+export const fetchEvents = async ({
+  search = '',
+  category,
+}: {
+  search?: string;
+  category?: string;
+}) => {
+  // const events = await db.event.findMany({});
+  const events = await db.event.findMany({
+    where: {
+      category,
+      OR: [
+        { name: { contains: search, mode: 'insensitive' } },
+        { tagline: { contains: search, mode: 'insensitive' } },
+        { venue: { contains: search, mode: 'insensitive' } },
+      ],
+    },
+
+    select: {
+      id: true,
+      name: true,
+      tagline: true,
+      country: true,
+      price: true,
+      venue: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+  return events;
 };

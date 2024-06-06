@@ -21,7 +21,9 @@ model Profile {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
   properties   Property[]
-  User         User[]
+  events       Event[]
+  eventAttendees EventAttendee[]
+
 
 }
 
@@ -43,6 +45,7 @@ model Property {
   updatedAt   DateTime   @updatedAt
   profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
   profileId   String
+  
 }
 
 model Event {
@@ -51,27 +54,32 @@ model Event {
   tagline     String
   category    String
   image       String
-  location    String
+  country     String?
+  venue       String
+  location    String?
   description String
-  price       Int
-  maxguests   Int
-  amenities   String
-  createdat   DateTime @default(now())
+  price       Int?
+  maxguests   Int?
+  duration    Int?
+  createdAt   DateTime @default(now())
   updatedAt   DateTime   @updatedAt
-  hostid           Int?
-  published        Boolean?
-  host             User?     @relation(fields: [hostid], references: [id])
-  User_EventToUser User[]    @relation("Attendees")
-}
-
-model User {
-  email             String?
-  id                Int     @default(autoincrement()) @id
-  mobile            String?
-  name              String?
+  hostid      Int?
+  published   Boolean?
   profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
   profileId   String
-  hostedEvents      Event[]
-  Event_EventToUser Event[] @relation("Attendees")
+  eventAttendees EventAttendee[]
+  
+  
+  
 }
 
+
+model EventAttendee {
+  id        String    @id @default(uuid())
+  event     Event     @relation(fields: [eventId], references: [id])
+  eventId   String
+  attendee  Profile   @relation(fields: [attendeeId], references: [clerkId])
+  attendeeId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

@@ -1,3 +1,4 @@
+import { max } from 'date-fns';
 import * as z from 'zod';
 import { ZodSchema } from 'zod';
 
@@ -24,6 +25,8 @@ export function validateWithZodSchema<T>(
 
   if (!result.success) {
     const errors = result.error.errors.map((error) => error.message);
+    console.log(errors);
+
     throw new Error(errors.join(', '));
   }
   return result.data;
@@ -97,36 +100,25 @@ export const propertySchema = z.object({
 export const eventSchema = z.object({
   name: z
     .string()
-    .min(2, {
-      message: 'name must be at least 2 characters.',
-    })
-    .max(100, {
-      message: 'name must be less than 100 characters.',
-    }),
+    .min(2, { message: 'name must be at least 2 characters long' }),
   tagline: z
     .string()
-    .min(2, {
-      message: 'tagline must be at least 2 characters.',
-    })
-    .max(100, {
-      message: 'tagline must be less than 100 characters.',
-    }),
+    .min(2, { message: 'tagline must be at least 2 characters long' }),
+  category: z.string(),
+  country: z.string(),
+  description: z
+    .string()
+    .min(10, { message: 'description must be at least 10 characters long' }),
+  venue: z.string(),
+  location: z.string(),
+  maxguests: z.coerce
+    .number()
+    .int()
+    .min(0, { message: 'guests must be a positive number' }),
   price: z.coerce.number().int().min(0, {
     message: 'price must be a positive number.',
   }),
-  category: z.string(),
-  description: z.string().refine(
-    (description) => {
-      const wordCount = description.split(' ').length;
-      return wordCount >= 10 && wordCount <= 1000;
-    },
-    {
-      message: 'description must be between 10 and 1000 words.',
-    }
-  ),
-  location: z.string(),
-  maxguests: z.coerce.number().int().min(0, {
-    message: 'guest amount must be a positive number.',
+  duration: z.coerce.number().int().min(0, {
+    message: 'duration must be a positive number.',
   }),
-  amenities: z.string(),
 });
