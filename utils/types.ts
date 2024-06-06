@@ -8,8 +8,7 @@ export type EventCardProps = {
   id: string;
   name: string;
   tagline: string;
+  venue: string;
   country: string;
   price: number;
-  venue: string;
-  createdAt: string;
 };

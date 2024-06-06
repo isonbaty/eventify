@@ -12,23 +12,23 @@ type Category = {
 };
 
 export type CategoryLabel =
-  | 'internal'
-  | 'external'
-  | 'ms teams'
+  | 'internal Events'
+  | 'external Events'
+  | 'ms teams Events'
   | 'webinar'
   | 'online';
 
 export const eventscategories: Category[] = [
   {
-    label: 'internal',
+    label: 'internal Events',
     icon: MdEventAvailable,
   },
   {
-    label: 'external',
+    label: 'external Events',
     icon: MdEventAvailable,
   },
   {
-    label: 'ms teams',
+    label: 'ms teams Events',
     icon: PiMicrosoftTeamsLogo,
   },
   {

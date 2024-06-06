@@ -62,6 +62,7 @@ model Event {
   maxguests   Int?
   duration    Int?
   createdAt   DateTime @default(now())
+  createdat   DateTime @default(now())
   updatedAt   DateTime   @updatedAt
   hostid      Int?
   published   Boolean?

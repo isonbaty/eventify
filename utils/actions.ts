@@ -202,12 +202,13 @@ export const fetchEvents = async ({
       id: true,
       name: true,
       tagline: true,
+      venue: true,
+      image: true,
       country: true,
       price: true,
-      venue: true,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdat: 'desc',
     },
   });
   return events;
