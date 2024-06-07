@@ -9,6 +9,6 @@ export type EventCardProps = {
   name: string;
   tagline: string;
   venue: string;
-  country: string;
-  price: number;
+  country: string | null;
+  price: number | null;
 };

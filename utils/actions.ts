@@ -213,3 +213,83 @@ export const fetchEvents = async ({
   });
   return events;
 };
+
+export const fetchFavoriteId = async ({ eventId }: { eventId: string }) => {
+  const user = await getAuthUser();
+  const favorite = await db.favorite.findFirst({
+    where: {
+      eventId,
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return favorite?.id || null;
+};
+
+export const toggleFavoriteAction = async (prevState: {
+  eventId: string;
+  favoriteId: string | null;
+  pathname: string;
+}) => {
+  const user = await getAuthUser();
+  const { eventId, favoriteId, pathname } = prevState;
+
+  try {
+    if (favoriteId) {
+      await db.favorite.delete({
+        where: {
+          id: favoriteId,
+        },
+      });
+    } else {
+      await db.favorite.create({
+        data: {
+          eventId,
+          profileId: user.id,
+        },
+      });
+    }
+    revalidatePath(pathname);
+    return {
+      message: favoriteId ? 'Removed from Favorites' : 'Added to Favorites',
+    };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const fetchFavorites = async () => {
+  const user = await getAuthUser();
+  const favorites = await db.favorite.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      event: {
+        select: {
+          id: true,
+          name: true,
+          tagline: true,
+          venue: true,
+          image: true,
+          country: true,
+          price: true,
+        },
+      },
+    },
+  });
+  return favorites.map((favorite) => favorite.event);
+};
+
+export const fetchEventDetails = async (id: string) => {
+  return db.event.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      profile: true,
+    },
+  });
+};

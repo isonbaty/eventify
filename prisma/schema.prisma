@@ -23,6 +23,7 @@ model Profile {
   properties   Property[]
   events       Event[]
   eventAttendees EventAttendee[]
+  favorites Favorite[]
 
 
 }
@@ -69,6 +70,7 @@ model Event {
   profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
   profileId   String
   eventAttendees EventAttendee[]
+  favorites Favorite[]
   
   
   
@@ -83,4 +85,17 @@ model EventAttendee {
   attendeeId String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile   Profile  @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
+  profileId String
+
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId String
+
 }
