@@ -11,7 +11,7 @@ function EventRating({
   const rating = 4.5;
   const count = 100;
   const className = `flex gap-1 items-center ${inPage ? 'text-md' : 'text-xs'}`;
-  const countText = count > 1 ? 'review' : 'reviews';
+  const countText = count > 1 ? 'reviews' : 'review';
   const countValue = `(${count}) ${inPage ? countText : ''}`;
   return (
     <span className={className}>
