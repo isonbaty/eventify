@@ -4,9 +4,13 @@ import { Button } from '../ui/button';
 function Logo() {
   return (
     <>
-      <Button size='icon' asChild>
+      <Button asChild className='pt-7 pb-7'>
         <Link href='/'>
-          <HiOutlineTicket className='w-6 h-6' />
+          <HiOutlineTicket className='w-10 h-10' />
+          <div>
+            <span className='text-4xl pl-3 font-bold'> Eventify. </span>
+            <span className='text-[11px]'> by DEWA</span>
+          </div>
         </Link>
       </Button>
     </>

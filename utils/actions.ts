@@ -6,6 +6,7 @@ import {
   imageSchema,
   propertySchema,
   eventSchema,
+  createReviewSchema,
 } from './schema';
 import db from './db';
 import { clerkClient, currentUser } from '@clerk/nextjs/server';
@@ -323,6 +324,89 @@ export const RegisterUnRegistertoEvent = async (prevState: {
         ? 'You have unregistered from this event'
         : 'You have registered to this event',
     };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const createReviewAction = async (
+  prevState: any,
+  formData: FormData
+) => {
+  const user = await getAuthUser();
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(createReviewSchema, rawData);
+    await db.review.create({
+      data: {
+        ...validatedFields,
+        profileId: user.id,
+      },
+    });
+    revalidatePath(`/events/${validatedFields.eventId}`);
+    return { message: 'Review submitted successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const fetchEventReviews = async (eventId: string) => {
+  const reviews = await db.review.findMany({
+    where: {
+      eventId,
+    },
+    select: {
+      id: true,
+      rating: true,
+      comment: true,
+      profile: {
+        select: {
+          firstName: true,
+          lastName: true,
+          profileImage: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+  return reviews;
+};
+
+export const fetchEventReviewsByUser = async () => {
+  const user = await getAuthUser();
+  const reviews = await db.review.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+      rating: true,
+      comment: true,
+      event: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+    },
+  });
+  return reviews;
+};
+
+export const deleteReviewAction = async (prevState: { reviewId: string }) => {
+  const { reviewId } = prevState;
+  const user = await getAuthUser();
+  try {
+    await db.review.delete({
+      where: {
+        id: reviewId,
+        profileId: user.id,
+      },
+    });
+    revalidatePath('/reviews');
+    return { message: 'Review deleted successfully' };
   } catch (error) {
     return renderError(error);
   }

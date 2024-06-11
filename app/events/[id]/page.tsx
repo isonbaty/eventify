@@ -13,6 +13,8 @@ import Description from '@/components/events/Description';
 import CountryFlagAndName from '@/components/card/CountryFlagAndName';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
+import SubmitReview from '@/components/reviews/SubmitReview';
+import EventReviews from '@/components/reviews/EventReviews';
 
 const DynamicMap = dynamic(() => import('@/components/events/EventMap'), {
   ssr: false,
@@ -88,6 +90,8 @@ async function EventDetailsPage({ params }: { params: { id: string } }) {
           <EventCalendar />
         </div>
       </section>
+      <SubmitReview eventId={event.id} />
+      <EventReviews eventId={event.id} />
     </section>
   );
 }
