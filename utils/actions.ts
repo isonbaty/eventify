@@ -293,3 +293,37 @@ export const fetchEventDetails = async (id: string) => {
     },
   });
 };
+
+export const RegisterUnRegistertoEvent = async (prevState: {
+  eventId: string;
+  attendeeId: string | null;
+  pathname: string;
+}) => {
+  const user = await getAuthUser();
+  const { eventId, attendeeId, pathname } = prevState;
+
+  try {
+    if (attendeeId) {
+      await db.eventAttendee.delete({
+        where: {
+          id: attendeeId,
+        },
+      });
+    } else {
+      await db.eventAttendee.create({
+        data: {
+          eventId,
+          attendeeId: user.id,
+        },
+      });
+    }
+    revalidatePath(pathname);
+    return {
+      message: attendeeId
+        ? 'You have unregistered from this event'
+        : 'You have registered to this event',
+    };
+  } catch (error) {
+    return renderError(error);
+  }
+};
