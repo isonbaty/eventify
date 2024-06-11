@@ -13,7 +13,7 @@ async function UserIcon() {
           src={profileImage}
           className='w-6 h-6 bg-primary rounded-full object-cover'
         />
-        <span className='text-xs'>{firstName}</span>
+        <span className='text-xs text-muted-foreground'>{firstName}</span>
       </>
     );
   }
