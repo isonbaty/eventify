@@ -17,6 +17,7 @@ import { currentUser } from '@clerk/nextjs/server';
 
 async function LinksDropdown() {
   const user = await currentUser();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -68,6 +68,7 @@ export const createProfileAction = async (
 
 export const fetchProfileImage = async () => {
   const user = await currentUser();
+
   if (!user) return null;
   const profile = await db.profile.findUnique({
     where: {
@@ -75,9 +76,24 @@ export const fetchProfileImage = async () => {
     },
     select: {
       profileImage: true,
+      firstName: true,
     },
   });
   return profile?.profileImage;
+};
+export const fetchFirsName = async () => {
+  const user = await currentUser();
+
+  if (!user) return null;
+  const profile = await db.profile.findUnique({
+    where: {
+      clerkId: user.id,
+    },
+    select: {
+      firstName: true,
+    },
+  });
+  return profile?.firstName;
 };
 
 export const fetchProfile = async () => {
