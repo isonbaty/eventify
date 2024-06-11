@@ -411,3 +411,31 @@ export const deleteReviewAction = async (prevState: { reviewId: string }) => {
     return renderError(error);
   }
 };
+
+export async function fetchEventRating(eventId: string) {
+  const result = await db.review.groupBy({
+    by: ['eventId'],
+    _avg: {
+      rating: true,
+    },
+    _count: {
+      rating: true,
+    },
+    where: {
+      eventId,
+    },
+  });
+  return {
+    rating: result[0]?._avg.rating?.toFixed() ?? 0,
+    count: result[0]?._count.rating ?? 0,
+  };
+}
+
+export const findExistingReview = async (userId: string, eventId: string) => {
+  return db.review.findFirst({
+    where: {
+      profileId: userId,
+      eventId,
+    },
+  });
+};

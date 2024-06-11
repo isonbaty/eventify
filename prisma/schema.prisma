@@ -67,7 +67,8 @@ model Event {
   createdat   DateTime @default(now())
   updatedAt   DateTime   @updatedAt
   hostid      Int?
-  published   Boolean?
+  isFinished  Boolean?
+  isFeatured  Boolean?
   profile     Profile    @relation(fields: [profileId], references: [clerkId], onDelete: Cascade)
   profileId   String
   eventAttendees EventAttendee[]

@@ -1,6 +1,6 @@
 import FavoriteToggleButton from '@/components/card/FavoriteToggleButton';
 import BreadCrumbs from '@/components/events/BreadCrumbs';
-import { fetchEventDetails } from '@/utils/actions';
+import { fetchEventDetails, findExistingReview } from '@/utils/actions';
 import { redirect } from 'next/navigation';
 import ShareButton from '@/components/events/ShareButton';
 import ImageContainer from '@/components/events/ImageContainer';
@@ -15,6 +15,8 @@ import dynamic from 'next/dynamic';
 import { Skeleton } from '@/components/ui/skeleton';
 import SubmitReview from '@/components/reviews/SubmitReview';
 import EventReviews from '@/components/reviews/EventReviews';
+
+import { auth } from '@clerk/nextjs/server';
 
 const DynamicMap = dynamic(() => import('@/components/events/EventMap'), {
   ssr: false,
@@ -36,7 +38,8 @@ async function EventDetailsPage({ params }: { params: { id: string } }) {
     price,
     duration,
     description,
-    published,
+    isFeatured,
+    isFinished,
   } = event;
 
   const details = {
@@ -51,13 +54,18 @@ async function EventDetailsPage({ params }: { params: { id: string } }) {
     price,
     duration,
     description,
-    published,
+    isFeatured,
+    isFinished,
   };
   const firstName = event.profile.firstName;
   const lastName = event.profile.lastName;
   const email = event.profile.email;
   const profileImage = event.profile.profileImage;
-  const countryCode = event.country;
+
+  const { userId } = auth();
+  const isNotOwner = event.profile.clerkId !== userId;
+  const reviewDoesNotExist =
+    userId && isNotOwner && !(await findExistingReview(userId, event.id));
   return (
     <section>
       <BreadCrumbs name={event.name} />
@@ -90,7 +98,8 @@ async function EventDetailsPage({ params }: { params: { id: string } }) {
           <EventCalendar />
         </div>
       </section>
-      <SubmitReview eventId={event.id} />
+      {/* reviews */}
+      {reviewDoesNotExist && <SubmitReview eventId={event.id} />}
       <EventReviews eventId={event.id} />
     </section>
   );
