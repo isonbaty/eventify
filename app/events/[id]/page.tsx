@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import ShareButton from '@/components/events/ShareButton';
 import ImageContainer from '@/components/events/ImageContainer';
 import EventRating from '@/components/card/EventRating';
-import EventCalendar from '@/components/events/EventCalendar';
+
 import EventDetails from '@/components/events/EventDetails';
 import UserInfo from '@/components/events/UserInfo';
 import { Separator } from '@/components/ui/separator';
@@ -22,6 +22,14 @@ const DynamicMap = dynamic(() => import('@/components/events/EventMap'), {
   ssr: false,
   loading: () => <Skeleton className='h-[400] w-full' />,
 });
+
+const DynamicBookingWrapper = dynamic(
+  () => import('@/components/booking/BookingWrapper'),
+  {
+    ssr: false,
+    loading: () => <Skeleton className='h-[400] w-full' />,
+  }
+);
 
 async function EventDetailsPage({ params }: { params: { id: string } }) {
   const event = await fetchEventDetails(params.id);
@@ -66,6 +74,7 @@ async function EventDetailsPage({ params }: { params: { id: string } }) {
   const isNotOwner = event.profile.clerkId !== userId;
   const reviewDoesNotExist =
     userId && isNotOwner && !(await findExistingReview(userId, event.id));
+
   return (
     <section>
       <BreadCrumbs name={event.name} />
@@ -95,7 +104,12 @@ async function EventDetailsPage({ params }: { params: { id: string } }) {
         </div>
         <div className='lg:col-span-4 flex flex-col items-center'>
           {/* calendar */}
-          <EventCalendar />
+          <DynamicBookingWrapper
+            eventId={event.id}
+            price={event.price}
+            bookings={event.bookings}
+            register={event.register}
+          />
         </div>
       </section>
       {/* reviews */}

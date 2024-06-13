@@ -12,3 +12,19 @@ export type EventCardProps = {
   country: string | null;
   price: number | null;
 };
+
+export type DateRangeSelect = {
+  startDate: Date;
+  endDate: Date;
+  key: string;
+};
+
+export type Booking = {
+  checkIn: Date;
+  checkOut: Date;
+};
+
+export type Register = {
+  isRaffle: boolean;
+  raffleNumber: number;
+};
