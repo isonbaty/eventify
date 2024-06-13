@@ -27,7 +27,7 @@ function ConfirmBooking() {
   });
 
   return (
-    <section>
+    <section className='w-full'>
       <FormContainer action={createBooking}>
         <SubmitButton text='Reserve' className='w-full' />
       </FormContainer>

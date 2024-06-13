@@ -24,7 +24,7 @@ export function SubmitButton({
   return (
     <Button
       type='submit'
-      className={`capitalize${className}`}
+      className={`capitalize${className} w-full`}
       disabled={pending}
       size={size}
     >
