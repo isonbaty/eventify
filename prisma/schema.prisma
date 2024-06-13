@@ -138,7 +138,7 @@ model Booking {
   event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId String
   orderTotal Int
-  totalNights Int
+  totalDays Int
   checkIn DateTime
   checkOut DateTime
   paymentStatus Boolean @default(false)

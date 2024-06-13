@@ -27,7 +27,7 @@ const DynamicBookingWrapper = dynamic(
   () => import('@/components/booking/BookingWrapper'),
   {
     ssr: false,
-    loading: () => <Skeleton className='h-[400] w-full' />,
+    loading: () => <Skeleton className='h-[200] w-full' />,
   }
 );
 

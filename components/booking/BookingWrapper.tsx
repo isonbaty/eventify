@@ -31,8 +31,8 @@ function BookingWrapper({
   }, []);
   return (
     <>
-      <BookingContainer />
       <BookingCalendar />
+      <BookingContainer />
     </>
   );
 }

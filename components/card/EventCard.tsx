@@ -32,7 +32,13 @@ function EventCard({ event }: { event: EventCardProps }) {
 
         <div className='flex justify-between items-center mt-1'>
           <p className='text-sm mt-1'>
-            <span className='font-semibold'>{formatCurrency(price)}</span>
+            {price === 0 ? (
+              <span className='font-semibold text-primary'>Free</span>
+            ) : (
+              <span className='font-semibold'>
+                Price: {formatCurrency(price)}
+              </span>
+            )}
           </p>
           {/* country and flag  */}
           {/* <CountryFlagAndName countryCode={country} /> */}

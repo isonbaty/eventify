@@ -13,6 +13,7 @@ import { clerkClient, currentUser } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { uploadImage } from './supabase';
+import { calculateTotals } from './calculateTotals';
 
 const getAuthUser = async () => {
   const user = await currentUser();
@@ -466,4 +467,44 @@ export const findExistingReview = async (userId: string, eventId: string) => {
       eventId,
     },
   });
+};
+
+export const createBookingAction = async (prevState: {
+  eventId: string;
+  checkIn: Date;
+  checkOut: Date;
+}) => {
+  const user = await getAuthUser();
+  const { eventId, checkIn, checkOut } = prevState;
+  const event = await db.event.findUnique({
+    where: {
+      id: eventId,
+    },
+    select: {
+      price: true,
+    },
+  });
+  if (!event) {
+    return { message: 'Event not found' };
+  }
+  const { orderTotal, totalDays } = calculateTotals({
+    checkIn,
+    checkOut,
+    price: event.price,
+  });
+  try {
+    const booking = await db.booking.create({
+      data: {
+        checkIn,
+        checkOut,
+        totalDays,
+        orderTotal,
+        profileId: user.id,
+        eventId,
+      },
+    });
+  } catch (error) {
+    renderError(error);
+  }
+  redirect('/bookings');
 };
