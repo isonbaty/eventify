@@ -8,13 +8,13 @@ function ImageContainer({
   name: string;
 }) {
   return (
-    <section className='h-[300px] md:h-[500px] relative mt-8'>
+    <section className='h-[500px] md:h-[700px] relative mt-8'>
       <Image
         src={mainImage}
         fill
         sizes='100vw'
         alt={name}
-        className='object-cover rounded'
+        className='lg:object-contain md:object-cover object-cover'
         priority
       />
     </section>

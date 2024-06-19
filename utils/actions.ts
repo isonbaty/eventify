@@ -14,6 +14,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { uploadImage } from './supabase';
 import { calculateTotals } from './calculateTotals';
+import { date, object } from 'zod';
+import { raw } from '@prisma/client/runtime/library';
 
 const getAuthUser = async () => {
   const user = await currentUser();
@@ -179,16 +181,19 @@ export const createEventAction = async (
   try {
     const rawData = Object.fromEntries(formData);
     const file = formData.get('image') as File;
+    console.log(rawData);
 
     const validatedFields = validateWithZodSchema(eventSchema, rawData);
     const validateFile = validateWithZodSchema(imageSchema, { image: file });
-
     const fullPath = await uploadImage(validateFile.image);
+    const dateFrom = new Date(rawData.dateFrom.toString());
 
     await db.event.create({
       data: {
         profileId: user.id,
         image: fullPath,
+        dateFrom,
+
         ...validatedFields,
       },
     });

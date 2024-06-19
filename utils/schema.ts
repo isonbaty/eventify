@@ -120,6 +120,7 @@ export const eventSchema = z.object({
   duration: z.coerce.number().int().min(0, {
     message: 'duration must be a positive number.',
   }),
+  // dateFrom: z.date({ message: 'dateFrom must be a valid date' }),
 });
 
 export const createReviewSchema = z.object({

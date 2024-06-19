@@ -23,8 +23,8 @@ const DynamicMap = dynamic(() => import('@/components/events/EventMap'), {
   loading: () => <Skeleton className='h-[400] w-full' />,
 });
 
-const DynamicBookingWrapper = dynamic(
-  () => import('@/components/booking/BookingWrapper'),
+const DynamicRegisterWrapper = dynamic(
+  () => import('@/components/registering/RegisterWrapper'),
   {
     ssr: false,
     loading: () => <Skeleton className='h-[200] w-full' />,
@@ -104,7 +104,7 @@ async function EventDetailsPage({ params }: { params: { id: string } }) {
         </div>
         <div className='lg:col-span-4 flex flex-col items-center'>
           {/* calendar */}
-          <DynamicBookingWrapper
+          <DynamicRegisterWrapper
             eventId={event.id}
             price={event.price}
             bookings={event.bookings}
