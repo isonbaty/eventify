@@ -15,7 +15,6 @@ import { redirect } from 'next/navigation';
 import { uploadImage } from './supabase';
 import { calculateTotals } from './calculateTotals';
 import { date, object } from 'zod';
-import { raw } from '@prisma/client/runtime/library';
 
 const getAuthUser = async () => {
   const user = await currentUser();
@@ -513,3 +512,107 @@ export const createBookingAction = async (prevState: {
   }
   redirect('/bookings');
 };
+
+export const registerEventAction = async (prevState: {
+  eventId: string;
+  raffleNumber: number;
+}) => {
+  const user = await getAuthUser();
+  const isRegistered = await db.register.findFirst({
+    where: {
+      profileId: user.id,
+      eventId: prevState.eventId,
+    },
+  });
+  const { eventId } = prevState;
+  const event = await db.event.findUnique({
+    where: {
+      id: eventId,
+    },
+    select: {
+      price: true,
+      register: {
+        select: {
+          raffleNumber: true,
+          isRaffle: true,
+          id: true,
+        },
+      },
+    },
+  });
+  if (!event) {
+    return { message: 'Event not found' };
+  }
+  if (isRegistered) {
+    return { message: 'You have already registered for this event' };
+  }
+
+  const randomNumber = Math.floor(Math.random() * 100000);
+  try {
+    const register = await db.register.create({
+      data: {
+        raffleNumber: randomNumber,
+        isRaffle: true,
+        eventId,
+        profileId: user.id,
+      },
+    });
+  } catch (error) {
+    renderError(error);
+  }
+
+  redirect('/bookings');
+};
+
+export const findExistingRegister = async (userId: string, eventId: string) => {
+  return db.review.findFirst({
+    where: {
+      profileId: userId,
+      eventId,
+    },
+  });
+};
+
+export const fetchRegisteredEvents = async () => {
+  const user = await getAuthUser();
+  const registeredEvents = await db.register.findMany({
+    where: {
+      profileId: user.id,
+    },
+    include: {
+      event: {
+        select: {
+          id: true,
+          name: true,
+          tagline: true,
+          venue: true,
+          country: true,
+          price: true,
+          dateFrom: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+  return registeredEvents;
+};
+
+export async function deleteRegisterAction(prevState: { registerId: string }) {
+  const { registerId } = prevState;
+  const user = await getAuthUser();
+  try {
+    const result = await db.register.delete({
+      where: {
+        id: registerId,
+        profileId: user.id,
+      },
+    });
+
+    revalidatePath('/bookings');
+    return { message: 'Registration to this event deleted successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+}

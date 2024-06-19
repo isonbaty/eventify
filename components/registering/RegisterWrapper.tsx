@@ -31,7 +31,7 @@ function RegisterWrapper({
   }, []);
   return (
     <>
-      <RegisterCalendar />
+      {/* <RegisterCalendar /> */}
       <RegisterContainer />
     </>
   );
