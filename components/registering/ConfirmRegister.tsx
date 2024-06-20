@@ -12,7 +12,7 @@ function ConfirmRegister() {
   const { eventId, register } = useEvent((state) => state);
   const randomNumber = Math.floor(Math.random() * 100000);
   const isRegistered = register.find((r) => r.eventId === eventId);
-  const isUser = userId === isRegistered?.profileId;
+  const isUser = register.find((r) => r.profileId === userId);
   if (isUser && isRegistered) {
     return (
       <section className='w-full'>
