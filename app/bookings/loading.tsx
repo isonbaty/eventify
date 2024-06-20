@@ -1,6 +1,6 @@
 'use client';
 
-import LoadingTables from '@/components/registering/loadingTables';
+import LoadingTables from '@/components/registering/LoadingTables';
 
 function loading() {
   return <LoadingTables />;
