@@ -25,6 +25,10 @@ export type Booking = {
 };
 
 export type Register = {
+  profileId: string;
+  eventId: string;
+  createdAt: Date;
+  updatedAt: Date;
   isRaffle: boolean;
   raffleNumber: number;
 };

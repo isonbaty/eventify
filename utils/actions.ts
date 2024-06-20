@@ -322,6 +322,10 @@ export const fetchEventDetails = async (id: string) => {
         select: {
           raffleNumber: true,
           isRaffle: true,
+          eventId: true,
+          profileId: true,
+          createdAt: true,
+          updatedAt: true,
         },
       },
     },
@@ -536,6 +540,8 @@ export const registerEventAction = async (prevState: {
           raffleNumber: true,
           isRaffle: true,
           id: true,
+          eventId: true,
+          profileId: true,
         },
       },
     },
@@ -565,10 +571,15 @@ export const registerEventAction = async (prevState: {
 };
 
 export const findExistingRegister = async (userId: string, eventId: string) => {
-  return db.review.findFirst({
+  return db.register.findFirst({
     where: {
       profileId: userId,
       eventId,
+    },
+    select: {
+      id: true,
+      raffleNumber: true,
+      createdAt: true,
     },
   });
 };
@@ -615,4 +626,19 @@ export async function deleteRegisterAction(prevState: { registerId: string }) {
   } catch (error) {
     return renderError(error);
   }
+}
+
+export async function isRegisterforEvent(eventId: string, userId: string) {
+  const register = await db.register.findFirst({
+    where: {
+      eventId: eventId,
+      profileId: userId,
+    },
+    select: {
+      id: true,
+      raffleNumber: true,
+      createdAt: true,
+    },
+  });
+  return register;
 }

@@ -8,6 +8,7 @@ type EventState = {
   bookings: Booking[];
   register: Register[];
   range: DateRange | undefined;
+  isRegistered: boolean;
 };
 
 // Create the store
@@ -18,5 +19,6 @@ export const useEvent = create<EventState>(() => {
     bookings: [],
     register: [],
     range: undefined,
+    isRegistered: false,
   };
 });

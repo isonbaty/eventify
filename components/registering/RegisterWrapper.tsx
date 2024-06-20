@@ -22,6 +22,9 @@ function RegisterWrapper({
   register,
 }: RegisterWrapperProps) {
   useEffect(() => {
+    const mystate = useEvent.getState();
+    console.log('My state:', mystate);
+
     useEvent.setState({
       eventId,
       price,
@@ -29,6 +32,7 @@ function RegisterWrapper({
       register,
     });
   }, []);
+
   return (
     <>
       {/* <RegisterCalendar /> */}

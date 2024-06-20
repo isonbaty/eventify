@@ -4,12 +4,28 @@ import { useAuth, SignInButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import FormContainer from '../form/FormContainer';
 import { SubmitButton } from '../form/Buttons';
-import { registerEventAction, findExistingRegister } from '@/utils/actions';
+import { registerEventAction } from '@/utils/actions';
+import Link from 'next/link';
 
 function ConfirmRegister() {
-  const { userId } = useAuth() as any;
-  const { eventId } = useEvent((state) => state);
-  const randomNumber = Math.floor(Math.random() * 10000);
+  const { userId } = useAuth();
+  const { eventId, register } = useEvent((state) => state);
+  const randomNumber = Math.floor(Math.random() * 100000);
+
+  if (register.find((r) => r.eventId === eventId)) {
+    return (
+      <section className='w-full'>
+        <p className='text-center text-xs text-muted-foreground'>
+          You are registered for this event
+          <Button type='button' className='w-full mt-4'>
+            <Link href='/bookings'>Your Registrations</Link>
+          </Button>
+        </p>
+      </section>
+    );
+  }
+
+  // const isRegistered = register.find((r) => r.eventId === eventId);
 
   if (!userId)
     return (
@@ -28,7 +44,7 @@ function ConfirmRegister() {
   return (
     <section className='w-full'>
       <FormContainer action={createRegisteration}>
-        <SubmitButton text='Reserve' className='w-full' />
+        <SubmitButton text='Register' className='w-full' />
       </FormContainer>
     </section>
   );
