@@ -1,15 +1,18 @@
 'use client';
 
-import { useEvent } from '@/utils/store';
 import RegisterForm from './RegisterForm';
 import ConfirmRegister from './ConfirmRegister';
+import { useAuth } from '@clerk/nextjs';
 
-function registerContainer() {
+function RegisterContainer() {
+  const { userId } = useAuth();
+
   return (
     <div className='w-full'>
-      <RegisterForm />
+      {userId ? <RegisterForm /> : null}
+
       <ConfirmRegister />
     </div>
   );
 }
-export default registerContainer;
+export default RegisterContainer;

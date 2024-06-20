@@ -3,6 +3,7 @@ import { useEvent } from '@/utils/store';
 import { Booking, Register } from '@/utils/types';
 import RegisterCalendar from './RegisterCalendar';
 import RegisterContainer from './RegisterContainer';
+import { useAuth, SignInButton } from '@clerk/nextjs';
 
 import { useEffect } from 'react';
 
@@ -21,6 +22,8 @@ function RegisterWrapper({
   bookings,
   register,
 }: RegisterWrapperProps) {
+  const { userId } = useAuth();
+
   useEffect(() => {
     const mystate = useEvent.getState();
     console.log('My state:', mystate);
