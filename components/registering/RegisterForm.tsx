@@ -4,6 +4,7 @@ import { formatCurrency, formatDateTime } from '@/utils/format';
 import { Card, CardTitle } from '../ui/card';
 import { Separator } from '../ui/separator';
 import { useAuth, SignInButton } from '@clerk/nextjs';
+import { GiCardRandom } from 'react-icons/gi';
 
 function RegisterForm() {
   const { userId } = useAuth();
@@ -33,7 +34,6 @@ function RegisterForm() {
       <CardTitle className='mb-4'>Event information</CardTitle>
       <Separator className='mb-4' />
       <CardTitle className='mt-4 text-primary'>
-        {' '}
         Raffle Number is {raffleNumber}
       </CardTitle>
       <Separator className='mb-4 mt-4' />
