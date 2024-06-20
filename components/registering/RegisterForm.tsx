@@ -14,8 +14,10 @@ function RegisterForm() {
   const updateDate = formatDateTime(updatedAt || new Date());
   const createDate = formatDateTime(createdAt || new Date());
   console.log(updateDate);
+  const isRegistered = register.find((r) => r.eventId === eventId);
+  const isUser = register.find((r) => r.profileId === userId);
 
-  if (userId !== profileId) {
+  if (!isRegistered && !isUser) {
     return (
       <Card className='p-8 mb-4'>
         <CardTitle className='mb-4'>Event Information</CardTitle>
