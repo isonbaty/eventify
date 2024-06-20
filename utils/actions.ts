@@ -642,3 +642,55 @@ export async function isRegisterforEvent(eventId: string, userId: string) {
   });
   return register;
 }
+
+export const fetchEventsByUser = async () => {
+  const user = await getAuthUser();
+  const events = await db.event.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+  const eventsWithSubscribers = await Promise.all(
+    events.map(async (event) => {
+      const totalSubscribers = await db.register.aggregate({
+        where: {
+          eventId: event.id,
+        },
+        _count: {
+          eventId: true,
+        },
+      });
+      return {
+        ...event,
+        totalSubscribers: totalSubscribers._count.eventId,
+      };
+    })
+  );
+  return eventsWithSubscribers;
+};
+
+export const deleteEventAction = async (prevState: { eventId: string }) => {
+  const { eventId } = prevState;
+  const user = await getAuthUser();
+
+  try {
+    await db.event.delete({
+      where: {
+        id: eventId,
+        profileId: user.id,
+      },
+    });
+    revalidatePath('/myevents');
+    return { message: 'Event deleted successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
+};

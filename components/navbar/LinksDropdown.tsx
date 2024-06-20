@@ -51,11 +51,18 @@ async function LinksDropdown() {
             );
           })}
           {user?.privateMetadata.isAdmin === true ? (
-            <DropdownMenuItem>
-              <Link href='/eventspost/create' className='capitalize w-full'>
-                Create Event
-              </Link>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem>
+                <Link href='/eventspost/create' className='capitalize w-full'>
+                  Create Event
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href='/eventspost' className='capitalize w-full'>
+                  My Events Subscriptions
+                </Link>
+              </DropdownMenuItem>
+            </>
           ) : null}
 
           <DropdownMenuSeparator />
