@@ -33,18 +33,19 @@ async function EventsPostPage() {
       <Table>
         <TableCaption>A List of all your events</TableCaption>
         <TableHeader>
-          <TableRow>
+          <TableRow className='font-semibold'>
             <TableCell>Event Name</TableCell>
 
-            <TableCell>Number of Subscribers</TableCell>
-            <TableCell>Price</TableCell>
+            <TableCell className='text-center'>Number of Subscribers</TableCell>
+            <TableCell className='text-center'>Price</TableCell>
+            <TableCell className='text-center'>Orders Total</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
         </TableHeader>
         <TableBody>
           {events.map((event) => {
             const { id: eventId, name, price } = event;
-            const { totalSubscribers } = event;
+            const { totalSubscribers, orderTotalSum } = event;
             return (
               <TableRow key={eventId}>
                 <TableCell>
@@ -55,9 +56,20 @@ async function EventsPostPage() {
                     {name}
                   </Link>
                 </TableCell>
-                <TableCell>{totalSubscribers}</TableCell>
-                <TableCell>
-                  {formatCurrency(price * totalSubscribers)}
+                <TableCell className='text-center'>
+                  {totalSubscribers}
+                </TableCell>
+                <TableCell className='text-center'>
+                  {formatCurrency(price)}
+                </TableCell>
+                <TableCell className='text-center'>
+                  {formatCurrency(orderTotalSum)}
+                </TableCell>
+                <TableCell className='flex items-center gap-x-2'>
+                  <Link href={`/eventspost/${eventId}/edit`}>
+                    <IconButton actionType='edit' />
+                  </Link>
+                  <DeleteEvent eventId={eventId} />
                 </TableCell>
               </TableRow>
             );
@@ -65,6 +77,14 @@ async function EventsPostPage() {
         </TableBody>
       </Table>
     </div>
+  );
+}
+function DeleteEvent({ eventId }: { eventId: string }) {
+  const deleteEvent = deleteEventAction.bind(null, { eventId });
+  return (
+    <FormContainer action={deleteEvent}>
+      <IconButton actionType='delete' />
+    </FormContainer>
   );
 }
 export default EventsPostPage;

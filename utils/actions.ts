@@ -541,6 +541,7 @@ export const registerEventAction = async (prevState: {
           isRaffle: true,
           id: true,
           eventId: true,
+          orderTotal: true,
           profileId: true,
         },
       },
@@ -559,6 +560,7 @@ export const registerEventAction = async (prevState: {
       data: {
         raffleNumber: randomNumber,
         isRaffle: true,
+        orderTotal: event.price,
         eventId,
         profileId: user.id,
       },
@@ -668,9 +670,19 @@ export const fetchEventsByUser = async () => {
           eventId: true,
         },
       });
+      const orderTotalSum = await db.register.aggregate({
+        where: {
+          eventId: event.id,
+          paymentStatus: false,
+        },
+        _sum: {
+          orderTotal: true,
+        },
+      });
       return {
         ...event,
         totalSubscribers: totalSubscribers._count.eventId,
+        orderTotalSum: orderTotalSum._sum.orderTotal,
       };
     })
   );
@@ -693,4 +705,22 @@ export const deleteEventAction = async (prevState: { eventId: string }) => {
   } catch (error) {
     return renderError(error);
   }
+};
+
+export const fetchEventDetailsByUser = async (eventId: string) => {
+  const user = await getAuthUser();
+  return db.event.findUnique({
+    where: {
+      id: eventId,
+      profileId: user.id,
+    },
+  });
+};
+
+export const updateEventAction = async () => {
+  return { message: 'Event updated successfully' };
+};
+
+export const updateEventImageAction = async () => {
+  return { message: 'Event image updated successfully' };
 };

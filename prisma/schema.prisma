@@ -127,6 +127,8 @@ model Register {
   eventId String
   isRaffle Boolean @default(false)
   raffleNumber Int
+  orderTotal Int 
+  paymentStatus Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

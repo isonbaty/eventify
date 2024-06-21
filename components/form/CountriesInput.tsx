@@ -10,7 +10,11 @@ import {
 
 const name = 'country';
 
-function CountriesInput({ defaultValue }: { defaultValue?: string }) {
+function CountriesInput({
+  defaultValue,
+}: {
+  defaultValue?: string | undefined;
+}) {
   return (
     <div className='mb-2'>
       <Label htmlFor={name} className='capitalize'>
