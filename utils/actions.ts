@@ -724,3 +724,19 @@ export const updateEventAction = async () => {
 export const updateEventImageAction = async () => {
   return { message: 'Event image updated successfully' };
 };
+
+export const fetchRegisrationDetails = async (eventId: string) => {
+  const user = await getAuthUser();
+  return db.register.findUnique({
+    where: {
+      id: eventId,
+      profileId: user.id,
+    },
+    select: {
+      raffleNumber: true,
+      isRaffle: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+};

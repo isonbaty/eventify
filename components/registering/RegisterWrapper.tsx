@@ -26,7 +26,7 @@ function RegisterWrapper({
 
   useEffect(() => {
     const mystate = useEvent.getState();
-    console.log('My state:', mystate);
+    // console.log('My state:', mystate);
 
     useEvent.setState({
       eventId,

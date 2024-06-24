@@ -5,6 +5,7 @@ import { Card, CardTitle } from '../ui/card';
 import { Separator } from '../ui/separator';
 import { useAuth, SignInButton } from '@clerk/nextjs';
 import { GiCardRandom } from 'react-icons/gi';
+import RegistrationDetaiils from './RegistrationDetaiils';
 
 function RegisterForm() {
   const { userId } = useAuth();
@@ -12,6 +13,10 @@ function RegisterForm() {
   console.log('Register:', register);
   const { profileId, createdAt, updatedAt, isRaffle, raffleNumber } =
     register.find((r) => r.eventId === eventId) || {};
+
+  // const details = await fetchRegisrationDetails(eventId);
+  // console.log('Details:', details);
+
   const updateDate = formatDateTime(updatedAt || new Date());
   const createDate = formatDateTime(createdAt || new Date());
   console.log(updateDate);
@@ -33,11 +38,9 @@ function RegisterForm() {
     <Card className='p-8 mb-4'>
       <CardTitle className='mb-4'>Event information</CardTitle>
       <Separator className='mb-4' />
-      <CardTitle className='mt-4 text-primary'>
-        Raffle Number is {raffleNumber}
-      </CardTitle>
-      <Separator className='mb-4 mt-4' />
+
       {/* <Separator className='mb-4' /> */}
+
       {price > 0 && <FormRow label={`AED ${price} `} />}
 
       <FormRow label='last updated at' newText={updateDate} />
