@@ -9,20 +9,20 @@ type CalendarInputProps = {
 };
 
 function CreateEventCalendar({ defaultValue }: CalendarInputProps) {
-  const currentDate = new Date();
+  const currentDate = defaultValue || new Date();
   const [dateFrom, setDateFrom] = useState<Date | undefined>(currentDate);
 
   return (
     <>
-      <h3 className='text-xl font-semibold capitalize mb-4'>
-        Select Event start date
+      <h3 className='text-sm font-semibold capitalize mb-4'>
+        Select start date
       </h3>
       <input type='hidden' name='dateFrom' value={dateFrom?.toISOString()} />
       <Calendar
         mode='single'
         selected={dateFrom}
         onSelect={setDateFrom}
-        className='rounded-md border'
+        className='rounded-md '
       />
     </>
   );

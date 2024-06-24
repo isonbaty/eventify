@@ -717,12 +717,58 @@ export const fetchEventDetailsByUser = async (eventId: string) => {
   });
 };
 
-export const updateEventAction = async () => {
-  return { message: 'Event updated successfully' };
+export const updateEventAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  const eventId = formData.get('id') as string;
+  try {
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(eventSchema, rawData);
+    const dateFrom = new Date(rawData.dateFrom.toString());
+    await db.event.update({
+      where: {
+        id: eventId,
+        profileId: user.id,
+      },
+      data: {
+        dateFrom,
+        ...validatedFields,
+      },
+    });
+    revalidatePath(`/eventspost/${eventId}/edit`);
+    return { message: 'Event updated successfully' };
+  } catch (error) {
+    return renderError(error);
+  }
 };
 
-export const updateEventImageAction = async () => {
-  return { message: 'Event image updated successfully' };
+export const updateEventImageAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  const eventId = formData.get('id') as string;
+  try {
+    const image = formData.get('image') as File;
+    const validatedFields = validateWithZodSchema(imageSchema, { image });
+    const fullPath = await uploadImage(validatedFields.image);
+    await db.event.update({
+      where: {
+        id: eventId,
+        profileId: user.id,
+      },
+      data: {
+        image: fullPath,
+      },
+    });
+    revalidatePath(`/eventspost/${eventId}/edit`);
+    return { message: 'Event image updated successfully' };
+  } catch (error) {
+    renderError(error);
+    return { message: 'An error occurred while uploading the Image ' };
+  }
 };
 
 export const fetchRegisrationDetails = async (eventId: string) => {
@@ -739,4 +785,32 @@ export const fetchRegisrationDetails = async (eventId: string) => {
       updatedAt: true,
     },
   });
+};
+
+export const fetchRervations = async () => {
+  const user = await getAuthUser();
+  const reservations = await db.booking.findMany({
+    where: {
+      event: {
+        profileId: user.id,
+      },
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      event: {
+        select: {
+          id: true,
+          name: true,
+          tagline: true,
+          venue: true,
+          country: true,
+          price: true,
+          dateFrom: true,
+        },
+      },
+    },
+  });
+  return reservations;
 };

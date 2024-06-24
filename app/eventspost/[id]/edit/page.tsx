@@ -18,6 +18,7 @@ import GuestsInput from '@/components/form/GuestsInput';
 import DurationInput from '@/components/form/DurationInput';
 import CreateEventCalendar from '@/components/form/CreateEventCalendar';
 import { formatDate } from '@/utils/format';
+import { date } from 'zod';
 
 async function EditEventPage({ params }: { params: { id: string } }) {
   const event = await fetchEventDetailsByUser(params.id);
@@ -51,12 +52,26 @@ async function EditEventPage({ params }: { params: { id: string } }) {
               label='Tagline (30 limit)'
               defaultValue={event.tagline}
               type='text'
+            />{' '}
+            <FormInput
+              name='venue'
+              label='venue'
+              defaultValue={event.venue}
+              type='text'
+            />
+            <FormInput
+              name='location'
+              label='location'
+              defaultValue={event.location || undefined}
+              type='text'
             />
             <PriceInput defaultValue={event.price} />
             <EventsCategoriesInput defaultValue={event.category} />
             <CountriesInput defaultValue={event.country || undefined} />
+          </div>
+          <div>
+            <CreateEventCalendar defaultValue={event.dateFrom || new Date()} />
             <p>{formatDate(event.dateFrom ?? new Date())}</p>
-            <CreateEventCalendar />
           </div>
           <h3 className='text-lg mt-8 mb-4 font-medium'>
             Event Capacity & Duration

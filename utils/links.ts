@@ -9,7 +9,7 @@ export const links: NavLink[] = [
   { href: '/bookings ', label: 'My Registrations' },
   // { href: '/eventspost ', label: 'Events Subscription' },
   { href: '/reviews ', label: 'reviews' },
-  // { href: '/events', label: 'My Events' },
+  { href: '/admin', label: 'admin' },
   { href: '/profile ', label: 'profile' },
   // { href: '/gallery ', label: 'gallery' },
 ];

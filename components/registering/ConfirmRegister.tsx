@@ -16,10 +16,10 @@ function ConfirmRegister() {
   if (isUser && isRegistered) {
     return (
       <section className='w-full'>
-        <p className='text-center text-xs text-muted-foreground'>
-          You are registered for this event
+        <p className='text-center text-sm text-muted-foreground'>
+          You are already registered for this event
           <Button type='button' className='w-full mt-4'>
-            <Link href='/bookings'>Your Registrations</Link>
+            <Link href='/bookings'>Your Registered Events </Link>
           </Button>
         </p>
       </section>
