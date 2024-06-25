@@ -45,6 +45,9 @@ async function LinksDropdown() {
         <SignedIn>
           {links.map((link) => {
             if (link.label === 'admin' && !isAdminUser) return null;
+            if (link.label === 'My Events & Subscriptions' && !isAdminUser)
+              return null;
+            if (link.label === 'Create New Event' && !isAdminUser) return null;
             return (
               <DropdownMenuItem key={link.href}>
                 <Link href={link.href} className='capitalize w-full'>
