@@ -20,7 +20,7 @@ function ImageInputContainer(props: ImageInputContainerProps) {
   const { image, name, action, text } = props;
   const [isUpdateFormVisible, setIsUpdateFormVisible] = useState(false);
   const userIcon = (
-    <LuUser2 className='h-24 w-24 bg-primary rounded text-white mb-4' />
+    <LuUser2 className='h-48 w-48 bg-primary rounded text-white mb-4' />
   );
   return (
     <div>
@@ -30,7 +30,7 @@ function ImageInputContainer(props: ImageInputContainerProps) {
           alt={name}
           width={100}
           height={100}
-          className='rounded object-cover mb-4 w-24 h-24'
+          className='rounded object-cover mb-4 w-48 h-48'
         />
       ) : (
         userIcon
