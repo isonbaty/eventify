@@ -15,11 +15,18 @@ import { redirect } from 'next/navigation';
 import { uploadImage } from './supabase';
 import { calculateTotals } from './calculateTotals';
 import { date, object } from 'zod';
+import { formatDate } from './format';
 
 const getAuthUser = async () => {
   const user = await currentUser();
   if (!user) throw new Error('You must be logged in to perform this action.');
   if (!user.privateMetadata.hasProfile) redirect('/profile/create');
+  return user;
+};
+
+const getNewAdminUser = async () => {
+  const user = await getAuthUser();
+  if (user.id !== process.env.ADMIN_USER_ID) redirect('/');
   return user;
 };
 
@@ -813,4 +820,52 @@ export const fetchRervations = async () => {
     },
   });
   return reservations;
+};
+
+export const fetchStats = async () => {
+  await getNewAdminUser();
+  const usersCount = await db.profile.count();
+  const eventsCount = await db.event.count();
+  const bookingsCount = await db.booking.count();
+  const reviewsCount = await db.review.count();
+  const favoritesCount = await db.favorite.count();
+  const registerCount = await db.register.count();
+
+  return {
+    usersCount,
+    eventsCount,
+    bookingsCount,
+    reviewsCount,
+    favoritesCount,
+    registerCount,
+  };
+};
+
+export const fetchChartsData = async () => {
+  await getNewAdminUser();
+  const date = new Date();
+  date.setMonth(date.getMonth() - 6);
+  const sixMonthsAgo = date;
+
+  const registrations = await db.register.findMany({
+    where: {
+      createdAt: {
+        gte: sixMonthsAgo,
+      },
+    },
+    orderBy: {
+      createdAt: 'asc',
+    },
+  });
+  const registrationsPerMonth = registrations.reduce((total, current) => {
+    const date = formatDate(current.createdAt, true);
+    const existingEntry = total.find((entry) => entry.date === date);
+    if (existingEntry) {
+      existingEntry.count += 1;
+    } else {
+      total.push({ date, count: 1 });
+    }
+    return total;
+  }, [] as Array<{ date: string; count: number }>);
+  return registrationsPerMonth;
 };

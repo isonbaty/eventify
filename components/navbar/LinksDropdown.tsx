@@ -53,7 +53,7 @@ async function LinksDropdown() {
               </DropdownMenuItem>
             );
           })}
-          {user?.privateMetadata.isAdmin === true ? (
+          {/* {user?.privateMetadata.isAdmin === true ? (
             <>
               <DropdownMenuItem>
                 <Link href='/eventspost/create' className='capitalize w-full'>
@@ -66,7 +66,7 @@ async function LinksDropdown() {
                 </Link>
               </DropdownMenuItem>
             </>
-          ) : null}
+          ) : null} */}
 
           <DropdownMenuSeparator />
           <DropdownMenuItem>

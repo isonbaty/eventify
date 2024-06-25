@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 // protected routes
 
 const isPublicRoute = createRouteMatcher(['/', 'events(.*)']);
-const isAdminRoute = createRouteMatcher(['/admin(.*)']);
+const isAdminRoute = createRouteMatcher(['/admin(.*)', '/eventspost(.*)']);
 
 export default clerkMiddleware((auth, req) => {
   const isAdminUser = auth().userId === process.env.ADMIN_USER_ID;
