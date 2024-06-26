@@ -65,7 +65,12 @@ async function EventsPostPage() {
                     </Link>
                   </TableCell>
                   <TableCell className='text-center'>
-                    {totalSubscribers}
+                    <Link
+                      href={`/registrations/${eventId}`}
+                      className='underline text-primary tracking-wide font-bold text-xl'
+                    >
+                      {totalSubscribers}
+                    </Link>
                   </TableCell>
                   <TableCell className='text-center'>
                     {formatCurrency(price)}

@@ -869,3 +869,54 @@ export const fetchChartsData = async () => {
   }, [] as Array<{ date: string; count: number }>);
   return registrationsPerMonth;
 };
+
+export const fetchProfilePerEvent = async (eventId: string) => {
+  const user = await getAuthUser();
+  const profileInfoPerEvent = await db.event.findMany({
+    where: {
+      id: eventId,
+    },
+    include: {
+      register: {
+        select: {
+          profileId: true,
+          raffleNumber: true,
+        },
+      },
+      profile: {
+        select: {
+          firstName: true,
+          lastName: true,
+          profileImage: true,
+          email: true,
+        },
+      },
+    },
+  });
+  return profileInfoPerEvent;
+};
+
+export const fetchEventRegistrations = async (eventId: string) => {
+  const user = await getAuthUser();
+  return db.register.findMany({
+    where: {
+      eventId,
+    },
+    include: {
+      event: {
+        select: {
+          name: true,
+          id: true,
+        },
+      },
+      profile: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          profileImage: true,
+        },
+      },
+    },
+  });
+};
