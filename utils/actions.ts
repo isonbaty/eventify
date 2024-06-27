@@ -16,6 +16,8 @@ import { uploadImage } from './supabase';
 import { calculateTotals } from './calculateTotals';
 import { date, object } from 'zod';
 import { formatDate } from './format';
+import { useQRCode } from 'next-qrcode';
+import { text } from 'stream/consumers';
 
 const getAuthUser = async () => {
   const user = await currentUser();
@@ -907,6 +909,7 @@ export const fetchEventRegistrations = async (eventId: string) => {
         select: {
           name: true,
           id: true,
+          dateFrom: true,
         },
       },
       profile: {
@@ -919,4 +922,51 @@ export const fetchEventRegistrations = async (eventId: string) => {
       },
     },
   });
+};
+
+export const fetchTicketDetails = async (eventId: string) => {
+  const user = await getAuthUser();
+  const ticket = db.event.findUnique({
+    where: {
+      id: eventId,
+      profileId: user.id,
+    },
+    include: {
+      profile: {
+        select: {
+          firstName: true,
+          lastName: true,
+          email: true,
+          id: true,
+        },
+      },
+      register: {
+        select: {
+          id: true,
+          raffleNumber: true,
+          isRaffle: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    },
+  });
+  return ticket;
+};
+
+export const regDetails = async (eventId: string) => {
+  const user = await getAuthUser();
+  const regDetails = await db.register.findFirst({
+    where: {
+      id: eventId,
+      profileId: user.id,
+    },
+    select: {
+      raffleNumber: true,
+      isRaffle: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return regDetails;
 };
